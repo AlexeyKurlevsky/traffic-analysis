@@ -1,0 +1,71 @@
+x-superset-image: &superset-image apache/superset:3.0.2
+x-superset-volumes:
+  &superset-volumes # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
+  - ./docker_superset:/app/docker_superset
+  - superset_home:/app/superset_home
+
+version: "3.7"
+services:
+
+  superset:
+    image: *superset-image
+    container_name: superset_app
+    env_file: .env
+    command: ["/app/docker_superset/docker-bootstrap.sh", "app-gunicorn"]
+    user: "root"
+    restart: unless-stopped
+    ports:
+      - 8088:8088
+    volumes: *superset-volumes
+    networks:
+      - my_network
+
+  superset-init:
+    image: *superset-image
+    container_name: superset_init
+    env_file: .env
+    command: ["/app/docker_superset/docker-init.sh"]
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+    networks:
+      - my_network
+
+  superset-worker:
+    image: *superset-image
+    container_name: superset_worker
+    env_file: .env
+    command: ["/app/docker_superset/docker-bootstrap.sh", "worker"]
+    restart: unless-stopped
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "celery -A docker_superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME",
+        ]
+    networks:
+      - my_network
+
+  superset-worker-beat:
+    image: *superset-image
+    container_name: superset_worker_beat
+    env_file: .env
+    command: ["/app/docker_superset/docker-bootstrap.sh", "beat"]
+    restart: unless-stopped
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+    networks:
+      - my_network
+
+volumes:
+  superset_home:
+    external: false
+
+networks:
+  my_network:
+    driver: bridge

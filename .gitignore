@@ -1,3 +1,5 @@
 .ipynb_checkpoints/
 .idea/
+.env
 draft.py
+delete_containers.sh
