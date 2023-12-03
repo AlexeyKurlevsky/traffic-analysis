@@ -2,10 +2,10 @@ version: '3.8'
 x-airflow-common:
   &airflow-common
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
-  # Comment the image line, place your Dockerfile in the directory where you placed the docker_superset-compose.yaml
-  # and uncomment the "build" line below, Then run `docker_superset-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.7.3}
-  # build: .
+  # Comment the image line, place your Dockerfile in the directory where you placed the superset-compose.yaml
+  # and uncomment the "build" line below, Then run `superset-compose build` to build the images.
+#  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.7.3}
+  build: .
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -27,10 +27,10 @@ x-airflow-common:
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
-    - ./docker_airflow/dags:/opt/airflow/dags
-    - ./docker_airflow/logs:/opt/airflow/logs
-    - ./docker_airflow/config:/opt/airflow/config
-    - ./docker_airflow/plugins:/opt/airflow/plugins
+    - ./docker/airflow/dags:/opt/airflow/dags
+    - ./docker/airflow/logs:/opt/airflow/logs
+    - ./docker/airflow/config:/opt/airflow/config
+    - ./docker/airflow/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
 
 services:
@@ -203,8 +203,8 @@ services:
     networks:
       - my_network
 
-  # You can enable flower by adding "--profile flower" option e.g. docker_superset-compose --profile flower up
-  # or by explicitly targeted on the command line e.g. docker_superset-compose up flower.
+  # You can enable flower by adding "--profile flower" option e.g. superset-compose --profile flower up
+  # or by explicitly targeted on the command line e.g. superset-compose up flower.
   # See: https://docs.docker.com/compose/profiles/
   flower:
     <<: *airflow-common

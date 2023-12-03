@@ -1,7 +1,7 @@
 x-superset-image: &superset-image apache/superset:3.0.2
 x-superset-volumes:
   &superset-volumes # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
-  - ./docker_superset:/app/docker_superset
+  - ./docker/superset:/app/docker/superset
   - superset_home:/app/superset_home
 
 version: "3.7"
@@ -11,7 +11,7 @@ services:
     image: *superset-image
     container_name: superset_app
     env_file: .env
-    command: ["/app/docker_superset/docker-bootstrap.sh", "app-gunicorn"]
+    command: ["/app/docker/superset/docker-bootstrap.sh", "app-gunicorn"]
     user: "root"
     restart: unless-stopped
     ports:
@@ -24,7 +24,7 @@ services:
     image: *superset-image
     container_name: superset_init
     env_file: .env
-    command: ["/app/docker_superset/docker-init.sh"]
+    command: ["/app/docker/superset/docker-init.sh"]
     user: "root"
     volumes: *superset-volumes
     healthcheck:
@@ -36,7 +36,7 @@ services:
     image: *superset-image
     container_name: superset_worker
     env_file: .env
-    command: ["/app/docker_superset/docker-bootstrap.sh", "worker"]
+    command: ["/app/docker/superset/docker-bootstrap.sh", "worker"]
     restart: unless-stopped
     user: "root"
     volumes: *superset-volumes
@@ -44,7 +44,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "celery -A docker_superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME",
+          "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME",
         ]
     networks:
       - my_network
@@ -53,7 +53,7 @@ services:
     image: *superset-image
     container_name: superset_worker_beat
     env_file: .env
-    command: ["/app/docker_superset/docker-bootstrap.sh", "beat"]
+    command: ["/app/docker/superset/docker-bootstrap.sh", "beat"]
     restart: unless-stopped
     user: "root"
     volumes: *superset-volumes

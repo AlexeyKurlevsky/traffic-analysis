@@ -2,4 +2,4 @@
 .idea/
 .env
 draft.py
-delete_containers.sh
+bin/delete_containers.sh
