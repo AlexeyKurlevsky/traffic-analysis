@@ -1,17 +1,18 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-from src.db import upload_raw_data
+from src.data.db import upload_raw_data
 
-my_dag = DAG(
-    'simple_python_dag',
+with DAG(
+    'EDA',
     start_date=datetime(2023, 2, 1),
-    schedule_interval='@daily'
-)
+    schedule_interval='@daily',
+    catchup=False
+):
+    python_task = PythonOperator(
+        task_id='uploading_raw_data',
+        python_callable=upload_raw_data,
+    )
 
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=upload_raw_data(),
-    dag=my_dag
-)
+python_task

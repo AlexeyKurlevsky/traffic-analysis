@@ -2,5 +2,4 @@
 .idea/
 .env
 draft.py
-./data/test_data.tsv
-bin/delete_containers.sh
+data/test_data.tsv
