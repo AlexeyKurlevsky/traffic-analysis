@@ -10,7 +10,7 @@ DATABASE_USER = os.getenv("DATABASE_USER", "postgres")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "postgres")
 DATABASE_HOST = os.getenv("DATABASE_HOST", "localhost")
 DATABASE_PORT = os.getenv("DATABASE_PORT", "5432")
-DATABASE_DB = os.getenv("POSTGRES_MULTIPLE_DATABASES", "airflow, superset, user_traffic").split(",")[-1].strip()
+DATABASE_DB = os.getenv("POSTGRES_MULTIPLE_DATABASES", "airflow,user_traffic").split(",")[-1].strip()
 
 SQLALCHEMY_DATABASE_URI = (
     f"{DATABASE_DIALECT}://"
