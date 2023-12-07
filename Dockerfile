@@ -6,3 +6,4 @@ RUN pip install -r requirements.txt
 COPY ./docker/airflow/dags /opt/airflow/dags/
 COPY ./src /opt/airflow/dags/src/
 COPY ./data /opt/airflow/dags/data/
+COPY ./models /opt/airflow/dags/models/

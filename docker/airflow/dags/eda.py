@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-from src.data.db import upload_raw_data, calculate_duration, calc_clicks_dynamic, delete_noise
+from src.db import upload_raw_data, calculate_duration, calc_clicks_dynamic, delete_noise
 
 with DAG(
     'EDA',
